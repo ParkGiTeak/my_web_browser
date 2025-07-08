@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class MainScreen extends StatefulWidget {
@@ -41,7 +42,17 @@ class _MainScreenState extends State<MainScreen> {
         ],
         title: Text('나만의 웹브라우저'),
       ),
-      body: WebViewWidget(controller: _webViewController),
+      body: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) async {
+          if (await _webViewController.canGoBack()) {
+            await _webViewController.goBack();
+          } else {
+            SystemNavigator.pop();
+          }
+        },
+        child: WebViewWidget(controller: _webViewController),
+      ),
     );
   }
 }
